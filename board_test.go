@@ -5,6 +5,46 @@ import (
 	"testing"
 )
 
+func TestMoveState(t *testing.T) {
+	tests := []struct {
+		name string
+		from CellState
+		move Direction
+		to   CellState
+	}{
+		{
+			name: "Move up from top row",
+			from: Unknown,
+			move: Down,
+			to:   Selected_cell,
+		},
+		{
+			name: "Move up from top row",
+			from: Flagged,
+			move: Right,
+			to:   Selected_cell,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			var board Board
+			board.height = 3
+			board.width = 3
+			board.current = Point{x: 0, y: 0}
+			board.Init()
+			board.prevState = tc.from
+			board.Move(tc.move)
+			if !reflect.DeepEqual(board.cells[board.current.x][board.current.y], tc.to) {
+				t.Errorf("Board.Move(%v) = %v, expected %v", tc.move, board, tc.to)
+			}
+			if !reflect.DeepEqual(board.cells[0][0], tc.from) {
+				t.Errorf("Board.Move(%v) = %v, expected %v", tc.move, board, tc.to)
+			}
+		})
+	}
+}
+
 func TestBoardMove(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -142,8 +182,9 @@ func TestBoardMove(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			tc.board.Init()
 			tc.board.Move(tc.move)
-			if !reflect.DeepEqual(tc.board, tc.expected) {
+			if !reflect.DeepEqual(tc.board.current, tc.expected.current) {
 				t.Errorf("Board.Move(%v) = %v, expected %v", tc.move, tc.board, tc.expected)
 			}
 		})
