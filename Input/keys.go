@@ -1,8 +1,9 @@
-package main
+package Input
 
 import (
 	"bufio"
 	"fmt"
+	G "minesweeper/Game"
 	"os"
 )
 
@@ -21,7 +22,7 @@ const (
 	KExit
 )
 
-func (g *Game) ProcessKeyStroke() {
+func ProcessKeyStroke(g *G.Game) {
 	char, _, err := reader.ReadRune()
 	if err != nil {
 		fmt.Println("Error reading key:", err)
@@ -33,22 +34,22 @@ func (g *Game) ProcessKeyStroke() {
 		os.Exit(0)
 	}
 	if key == KUp {
-		g.Board.Move(Left)
+		g.Board.Move(G.Left)
 		g.Refresh()
 		return
 	}
 	if key == KDown {
-		g.Board.Move(Right)
+		g.Board.Move(G.Right)
 		g.Refresh()
 		return
 	}
 	if key == KLeft {
-		g.Board.Move(Up)
+		g.Board.Move(G.Up)
 		g.Refresh()
 		return
 	}
 	if key == KRight {
-		g.Board.Move(Down)
+		g.Board.Move(G.Down)
 		g.Refresh()
 		return
 	}

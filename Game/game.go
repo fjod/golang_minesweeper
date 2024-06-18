@@ -1,4 +1,4 @@
-package main
+package Game
 
 import (
 	"fmt"
@@ -26,6 +26,7 @@ func (g *Game) Init() {
 	board.Init()
 	g.Board = &board
 	generateRandomMines(g)
+	g.Refresh()
 }
 
 func generateRandomMines(g *Game) {

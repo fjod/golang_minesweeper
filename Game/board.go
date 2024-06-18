@@ -1,4 +1,4 @@
-package main
+package Game
 
 import "fmt"
 
@@ -86,4 +86,5 @@ func (b *Board) Init() {
 		}
 	}
 	b.prevState = Unknown
+	b.cells[0][0] = Selected_cell
 }
