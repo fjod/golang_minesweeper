@@ -1,4 +1,4 @@
-package golang_minesweeper
+package main
 
 import "fmt"
 
@@ -73,6 +73,7 @@ func (b *Board) Print() {
 		for j := 0; j < b.width; j++ {
 			fmt.Print(b.cells[i][j].GetRune())
 		}
+		fmt.Println() // new line
 	}
 }
 
