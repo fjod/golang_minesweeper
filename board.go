@@ -71,7 +71,7 @@ func (b *Board) Move(direction Direction) {
 func (b *Board) Print() {
 	for i := 0; i < b.height; i++ {
 		for j := 0; j < b.width; j++ {
-			fmt.Print(b.cells[i][j].GetRune())
+			fmt.Printf("%c", b.cells[i][j].GetRune())
 		}
 		fmt.Println() // new line
 	}

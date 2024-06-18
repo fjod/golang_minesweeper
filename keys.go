@@ -33,22 +33,22 @@ func (g *Game) ProcessKeyStroke() {
 		os.Exit(0)
 	}
 	if key == KUp {
-		g.Board.Move(Up)
-		g.Refresh()
-		return
-	}
-	if key == KDown {
-		g.Board.Move(Down)
-		g.Refresh()
-		return
-	}
-	if key == KLeft {
 		g.Board.Move(Left)
 		g.Refresh()
 		return
 	}
-	if key == KRight {
+	if key == KDown {
 		g.Board.Move(Right)
+		g.Refresh()
+		return
+	}
+	if key == KLeft {
+		g.Board.Move(Up)
+		g.Refresh()
+		return
+	}
+	if key == KRight {
+		g.Board.Move(Down)
 		g.Refresh()
 		return
 	}
@@ -68,13 +68,13 @@ func (g *Game) ProcessKeyStroke() {
 
 func convertRuneToKeyStroke(char rune) KeyStroke {
 	switch char {
-	case 0x1B:
+	case 119:
 		return KUp
-	case 0x1A:
+	case 115:
 		return KDown
-	case 0x1C:
+	case 97:
 		return KLeft
-	case 0x1D:
+	case 100:
 		return KRight
 	case 0x66:
 		return KFlag
