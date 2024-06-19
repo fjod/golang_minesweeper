@@ -64,7 +64,7 @@ func (g *Game) Open() {
 	fmt.Println("waiting for your step..")
 
 	failIfMine(g)
-	open_nearby_cells(g)
+	openNearbyCells(g)
 
 	g.Board.Print()
 }

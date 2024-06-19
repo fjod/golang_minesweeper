@@ -39,3 +39,10 @@ var cellStateImage = map[CellState]rune{
 func (cellState CellState) GetRune() rune {
 	return cellStateImage[cellState]
 }
+
+func FromCount(c int) CellState {
+	if c < 1 || c > 9 {
+		return Unknown
+	}
+	return CellState(c + 2)
+}
