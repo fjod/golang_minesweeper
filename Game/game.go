@@ -55,6 +55,31 @@ func generateUniqueMines(g *Game) {
 	}
 }
 
+func (g *Game) Open() {
+	clearConsole()
+	fmt.Println("use arrows to move, f to flag, space to open cell, x to exit")
+	mines := calculateNotFoundMines(g)
+	fmt.Println("mines:", mines)
+	fmt.Println("steps:", g.Steps)
+	fmt.Println("waiting for your step..")
+
+	failIfMine(g)
+	open_nearby_cells(g)
+
+	g.Board.Print()
+}
+
+// проверить не попал ли ход на мину
+func failIfMine(g *Game) {
+	position := g.Board.current
+	for _, mine := range g.Mines {
+		if mine.Point.x == position.x && mine.Point.y == position.y {
+			fmt.Println("you stepped on a mine")
+			os.Exit(1)
+		}
+	}
+}
+
 func (g *Game) Refresh() {
 	clearConsole()
 	fmt.Println("use arrows to move, f to flag, space to open cell, x to exit")
