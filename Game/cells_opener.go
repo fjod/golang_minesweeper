@@ -8,14 +8,10 @@ type CellCheckedState struct {
 }
 
 func openNearbyCells(g *Game) {
-	// проверить 9 соседних клеток и выставить кол-во мин, которых касается каждая клетка
-	// если в соседней клетке 0 мин, то поставить её в открытую
-	// рекурсивно продолжать пока не закончатся непроверенные клетки
-
 	// сначала создать массив клеток с начальным состоянием
 	h := g.Board.height
 	w := g.Board.width
-	state := make([][]CellCheckedState, h*w)
+	state := make([][]CellCheckedState, h)
 	for i := 0; i < h; i++ {
 		state[i] = make([]CellCheckedState, w)
 		for j := 0; j < w; j++ {
@@ -28,17 +24,25 @@ func openNearbyCells(g *Game) {
 		}
 	}
 
-	// без рекурсии найти соседние клетки
-	surround := getNearbyCells(&state, g.Board.current.x, g.Board.current.y)
+	openNearbyCellsRec(g, &state, g.Board.current.x, g.Board.current.y)
+}
+
+func openNearbyCellsRec(g *Game, s *[][]CellCheckedState, x int, y int) {
+	// проверяем выбранную клетку
+	(*s)[x][y].checked = true
+	minesAround := getNearbyMinesCount(g, x, y)
+	if minesAround > 0 {
+		g.Board.cells[x][y] = FromCount(minesAround) // установить кол-во мин в клетке
+		return                                       // если рядом с клеткой мины, то останавливаем поиск соседних клеток
+	}
+	if minesAround == 0 {
+		g.Board.cells[x][y] = Opened_no_mines_nearby // открыть клетку
+	}
+
+	surround := getNearbyCells(s, x, y) // ищем всех соседей клетки
+
 	for _, cell := range surround {
-		cell.checked = true
-		localMines := getNearbyMinesCount(g, cell.x, cell.y)
-		if localMines > 0 {
-			g.Board.cells[cell.x][cell.y] = FromCount(localMines) // установить кол-во мин в клетке
-		}
-		if localMines == 0 {
-			// рекурсивно продолжать пока не закончатся непроверенные клетки
-		}
+		openNearbyCellsRec(g, s, cell.x, cell.y)
 	}
 }
 

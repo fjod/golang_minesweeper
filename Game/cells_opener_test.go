@@ -1,6 +1,7 @@
 package Game
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -147,6 +148,119 @@ func TestGetNearbyCells(t *testing.T) {
 				if !found {
 					t.Errorf("get_nearby_cells(%v, %d, %d) = %v, expected %v", tc.s, tc.x, tc.y, actual, tc.expected)
 				}
+			}
+		})
+	}
+}
+func TestOpenNearbyCells(t *testing.T) {
+	tests := []struct {
+		name     string
+		game     *Game
+		expected [][]CellState
+	}{
+		{
+			name: "Open cells on empty board",
+			game: &Game{
+				Board: &Board{
+					width:  3,
+					height: 3,
+					cells: [][]CellState{
+						{Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown},
+					},
+					current: Point{x: 1, y: 1},
+				},
+				Mines: []MinePosition{},
+			},
+			expected: [][]CellState{
+				{Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
+				{Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
+				{Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
+			},
+		},
+		{
+			name: "Open cells around mine",
+			game: &Game{
+				Board: &Board{
+					width:  3,
+					height: 3,
+					cells: [][]CellState{
+						{Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown},
+					},
+					current: Point{x: 1, y: 1},
+				},
+				Mines: []MinePosition{
+					{Point: Point{x: 0, y: 0}},
+				},
+			},
+			expected: [][]CellState{
+				{Unknown, Unknown, Unknown},
+				{Unknown, Opened_1_mine_nearby, Unknown},
+				{Unknown, Unknown, Unknown},
+			},
+		},
+		{
+			name: "Open cells around mine",
+			game: &Game{
+				Board: &Board{
+					width:  3,
+					height: 3,
+					cells: [][]CellState{
+						{Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown},
+					},
+					current: Point{x: 2, y: 2},
+				},
+				Mines: []MinePosition{
+					{Point: Point{x: 0, y: 0}},
+				},
+			},
+			expected: [][]CellState{
+				{Unknown, Opened_1_mine_nearby, Opened_no_mines_nearby},
+				{Opened_1_mine_nearby, Opened_1_mine_nearby, Opened_no_mines_nearby},
+				{Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
+			},
+		},
+		{
+			name: "Open cells around multiple mines",
+			game: &Game{
+				Board: &Board{
+					width:  5,
+					height: 5,
+					cells: [][]CellState{
+						{Unknown, Unknown, Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown, Unknown, Unknown},
+						{Unknown, Unknown, Unknown, Unknown, Unknown},
+					},
+					current: Point{x: 2, y: 2},
+				},
+				Mines: []MinePosition{
+					{Point: Point{x: 0, y: 0}},
+					{Point: Point{x: 4, y: 4}},
+				},
+			},
+			expected: [][]CellState{
+				{Unknown, Opened_1_mine_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
+				{Opened_1_mine_nearby, Opened_1_mine_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
+				{Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
+				{Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_1_mine_nearby, Opened_1_mine_nearby},
+				{Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_1_mine_nearby, Unknown},
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			openNearbyCells(tc.game)
+
+			if !reflect.DeepEqual(tc.game.Board.cells, tc.expected) {
+				t.Errorf("openNearbyCells = %v, expected %v", (*tc.game).Board.cells, tc.expected)
 			}
 		})
 	}
