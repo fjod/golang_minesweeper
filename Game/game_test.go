@@ -12,11 +12,11 @@ func TestInit(t *testing.T) {
 		t.Errorf("Game.Init() failed to initialize the Board")
 	}
 
-	if g.Board.height != 10 || g.Board.width != 10 {
+	if g.Board.Height != 10 || g.Board.Width != 10 {
 		t.Errorf("Game.Init() initialized Board with incorrect dimensions")
 	}
 
-	if len(g.Mines) != (g.Board.height*g.Board.width)/10 {
+	if len(g.Mines) != (g.Board.Height*g.Board.Width)/10 {
 		t.Errorf("Game.Init() generated incorrect number of mines")
 	}
 }
@@ -24,14 +24,14 @@ func TestInit(t *testing.T) {
 func TestGenerateRandomMines(t *testing.T) {
 	g := &Game{
 		Board: &Board{
-			height: 10,
-			width:  10,
+			Height: 10,
+			Width:  10,
 		},
 	}
 
 	generateRandomMines(g)
 
-	if len(g.Mines) != (g.Board.height*g.Board.width)/10 {
+	if len(g.Mines) != (g.Board.Height*g.Board.Width)/10 {
 		t.Errorf("generateRandomMines() generated incorrect number of mines")
 	}
 }
@@ -39,8 +39,8 @@ func TestGenerateRandomMines(t *testing.T) {
 func TestGenerateUniqueMines(t *testing.T) {
 	g := &Game{
 		Board: &Board{
-			height: 10,
-			width:  10,
+			Height: 10,
+			Width:  10,
 		},
 		Mines: []MinePosition{
 			{Point{0, 0}, false},

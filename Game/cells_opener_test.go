@@ -162,9 +162,9 @@ func TestOpenNearbyCells(t *testing.T) {
 			name: "Open cells on empty board",
 			game: &Game{
 				Board: &Board{
-					width:  3,
-					height: 3,
-					cells: [][]CellState{
+					Width:  3,
+					Height: 3,
+					Cells: [][]CellState{
 						{Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown},
@@ -183,9 +183,9 @@ func TestOpenNearbyCells(t *testing.T) {
 			name: "Open cells around mine",
 			game: &Game{
 				Board: &Board{
-					width:  3,
-					height: 3,
-					cells: [][]CellState{
+					Width:  3,
+					Height: 3,
+					Cells: [][]CellState{
 						{Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown},
@@ -206,9 +206,9 @@ func TestOpenNearbyCells(t *testing.T) {
 			name: "Open cells around mine",
 			game: &Game{
 				Board: &Board{
-					width:  3,
-					height: 3,
-					cells: [][]CellState{
+					Width:  3,
+					Height: 3,
+					Cells: [][]CellState{
 						{Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown},
@@ -229,9 +229,9 @@ func TestOpenNearbyCells(t *testing.T) {
 			name: "Open cells around multiple mines",
 			game: &Game{
 				Board: &Board{
-					width:  5,
-					height: 5,
-					cells: [][]CellState{
+					Width:  5,
+					Height: 5,
+					Cells: [][]CellState{
 						{Unknown, Unknown, Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown, Unknown, Unknown},
@@ -259,8 +259,8 @@ func TestOpenNearbyCells(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			openNearbyCells(tc.game)
 
-			if !reflect.DeepEqual(tc.game.Board.cells, tc.expected) {
-				t.Errorf("openNearbyCells = %v, expected %v", (*tc.game).Board.cells, tc.expected)
+			if !reflect.DeepEqual(tc.game.Board.Cells, tc.expected) {
+				t.Errorf("openNearbyCells = %v, expected %v", (*tc.game).Board.Cells, tc.expected)
 			}
 		})
 	}

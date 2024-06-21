@@ -22,45 +22,19 @@ const (
 	KExit
 )
 
-func ProcessKeyStroke(g *G.Game) {
-	char, _, err := reader.ReadRune()
-	if err != nil {
-		fmt.Println("Error reading key:", err)
-		return
-	}
-	key := convertRuneToKeyStroke(char)
-	if key == KExit {
-		fmt.Println("Exiting...")
-		os.Exit(0)
-	}
-	if key == KUp {
-		g.Board.Move(G.Left)
-		g.Refresh()
-		return
-	}
-	if key == KDown {
-		g.Board.Move(G.Right)
-		g.Refresh()
-		return
-	}
-	if key == KLeft {
-		g.Board.Move(G.Up)
-		g.Refresh()
-		return
-	}
-	if key == KRight {
-		g.Board.Move(G.Down)
-		g.Refresh()
-		return
-	}
-	if key == KFlag {
-		fmt.Println("flagging...")
+func ProcessKeyStroke(g *G.Game, x int, y int, b int) {
+
+	if b == 1 {
+		fmt.Println("moving...")
+		g.Board.Move2(x, y)
+		g.Open()
 		g.Refresh()
 		g.Steps++
 		return
 	}
-	if key == KOpen {
-		fmt.Println("opening...")
+	if b == 2 {
+		fmt.Println("flagging...")
+		g.Board.Flag(x, y)
 		g.Refresh()
 		g.Steps++
 		return

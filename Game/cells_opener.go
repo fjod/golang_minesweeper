@@ -9,14 +9,14 @@ type CellCheckedState struct {
 
 func openNearbyCells(g *Game) {
 	// сначала создать массив клеток с начальным состоянием
-	h := g.Board.height
-	w := g.Board.width
+	h := g.Board.Height
+	w := g.Board.Width
 	state := make([][]CellCheckedState, h)
 	for i := 0; i < h; i++ {
 		state[i] = make([]CellCheckedState, w)
 		for j := 0; j < w; j++ {
 			state[i][j] = CellCheckedState{
-				state:   g.Board.cells[i][j],
+				state:   g.Board.Cells[i][j],
 				checked: false,
 				x:       i,
 				y:       j,
@@ -32,11 +32,11 @@ func openNearbyCellsRec(g *Game, s *[][]CellCheckedState, x int, y int) {
 	(*s)[x][y].checked = true
 	minesAround := getNearbyMinesCount(g, x, y)
 	if minesAround > 0 {
-		g.Board.cells[x][y] = FromCount(minesAround) // установить кол-во мин в клетке
+		g.Board.Cells[x][y] = FromCount(minesAround) // установить кол-во мин в клетке
 		return                                       // если рядом с клеткой мины, то останавливаем поиск соседних клеток
 	}
 	if minesAround == 0 {
-		g.Board.cells[x][y] = Opened_no_mines_nearby // открыть клетку
+		g.Board.Cells[x][y] = Opened_no_mines_nearby // открыть клетку
 	}
 
 	surround := getNearbyCells(s, x, y) // ищем всех соседей клетки

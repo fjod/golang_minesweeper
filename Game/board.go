@@ -8,9 +8,9 @@ type Point struct {
 }
 
 type Board struct {
-	width     int
-	height    int
-	cells     [][]CellState
+	Width     int           `json:"width"`
+	Height    int           `json:"height"`
+	Cells     [][]CellState `json:"cells"`
 	current   Point
 	prevState CellState
 }
@@ -28,10 +28,18 @@ const (
 type movementFunc func(b *Board)
 
 func localMove(b *Board, f movementFunc) {
-	b.cells[b.current.x][b.current.y] = b.prevState   // restore prev state to current cell
+	b.Cells[b.current.x][b.current.y] = b.prevState   // restore prev state to current cell
 	f(b)                                              // move
-	b.prevState = b.cells[b.current.x][b.current.y]   // save current state for next move
-	b.cells[b.current.x][b.current.y] = Selected_cell // select current cell
+	b.prevState = b.Cells[b.current.x][b.current.y]   // save current state for next move
+	b.Cells[b.current.x][b.current.y] = Selected_cell // select current cell
+}
+
+func (b *Board) Move2(x int, y int) {
+	if x < 0 || x >= b.Width || y < 0 || y >= b.Height {
+		return
+	}
+	b.current.x = x
+	b.current.y = y
 }
 
 func (b *Board) Move(direction Direction) {
@@ -45,7 +53,7 @@ func (b *Board) Move(direction Direction) {
 			})
 		}
 	case Down:
-		if b.current.y < b.height-1 {
+		if b.current.y < b.Height-1 {
 			localMove(b, func(b *Board) {
 				b.current.y = b.current.y + 1
 			})
@@ -58,7 +66,7 @@ func (b *Board) Move(direction Direction) {
 
 		}
 	case Right:
-		if b.current.x < b.width-1 {
+		if b.current.x < b.Width-1 {
 			localMove(b, func(b *Board) {
 				b.current.x = b.current.x + 1
 			})
@@ -69,22 +77,26 @@ func (b *Board) Move(direction Direction) {
 }
 
 func (b *Board) Print() {
-	for i := 0; i < b.height; i++ {
-		for j := 0; j < b.width; j++ {
-			fmt.Printf("%c", b.cells[i][j].GetRune())
+	for i := 0; i < b.Height; i++ {
+		for j := 0; j < b.Width; j++ {
+			fmt.Printf("%c", b.Cells[i][j].GetRune())
 		}
 		fmt.Println() // new line
 	}
 }
 
 func (b *Board) Init() {
-	b.cells = make([][]CellState, b.height)
-	for i := 0; i < b.height; i++ {
-		b.cells[i] = make([]CellState, b.width)
-		for j := 0; j < b.width; j++ {
-			b.cells[i][j] = Unknown
+	b.Cells = make([][]CellState, b.Height)
+	for i := 0; i < b.Height; i++ {
+		b.Cells[i] = make([]CellState, b.Width)
+		for j := 0; j < b.Width; j++ {
+			b.Cells[i][j] = Unknown
 		}
 	}
 	b.prevState = Unknown
-	b.cells[0][0] = Selected_cell
+	b.Cells[0][0] = Selected_cell
+}
+
+func (b *Board) Flag(x int, y int) {
+	b.Cells[x][y] = Flagged
 }

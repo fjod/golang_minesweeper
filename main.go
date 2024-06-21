@@ -6,38 +6,46 @@ import (
 	G "minesweeper/Game"
 	K "minesweeper/Input"
 	"net/http"
-	"time"
+	"strconv"
 )
 
-type album struct {
-	ID     string  `json:"id"`
-	Title  string  `json:"title"`
-	Artist string  `json:"artist"`
-	Price  float64 `json:"price"`
+var game G.Game
+
+func getBoard(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, &game.Board)
 }
 
-var albums = []album{
-	{ID: "1", Title: "Blue Train", Artist: "John Coltrane", Price: 56.99},
-	{ID: "2", Title: "Jeru", Artist: "Gerry Mulligan", Price: 17.99},
-	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
+func processStep(c *gin.Context) {
+	x, _ := strconv.Atoi(c.Query("x"))
+	y, _ := strconv.Atoi(c.Query("y"))
+	b, _ := strconv.Atoi(c.Query("b"))
+	K.ProcessKeyStroke(&game, x, y, b)
+	c.IndentedJSON(http.StatusOK, &game.Board)
 }
-
-func getAlbums(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, albums)
-}
-
 func main() {
+
+	game.Init()
+
 	router := gin.Default()
-	router.GET("/albums", getAlbums)
+
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	})
+
+	router.GET("/init", getBoard)
+	router.GET("/step/:x/:y/:b", processStep)
 
 	router.Run("localhost:8080")
 
 	fmt.Println("Hello, playground")
-	var game G.Game
-	game.Init()
-	for {
-		time.Sleep(100 * time.Millisecond)
-		K.ProcessKeyStroke(&game)
-	}
-
 }
