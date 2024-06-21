@@ -154,9 +154,10 @@ func TestGetNearbyCells(t *testing.T) {
 }
 func TestOpenNearbyCells(t *testing.T) {
 	tests := []struct {
-		name     string
-		game     *Game
-		expected [][]CellState
+		name        string
+		game        *Game
+		clickCoords Point
+		expected    [][]CellState
 	}{
 		{
 			name: "Open cells on empty board",
@@ -169,10 +170,10 @@ func TestOpenNearbyCells(t *testing.T) {
 						{Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown},
 					},
-					current: Point{x: 1, y: 1},
 				},
 				Mines: []MinePosition{},
 			},
+			clickCoords: Point{x: 1, y: 1},
 			expected: [][]CellState{
 				{Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
 				{Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
@@ -190,12 +191,12 @@ func TestOpenNearbyCells(t *testing.T) {
 						{Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown},
 					},
-					current: Point{x: 1, y: 1},
 				},
 				Mines: []MinePosition{
 					{Point: Point{x: 0, y: 0}},
 				},
 			},
+			clickCoords: Point{x: 1, y: 1},
 			expected: [][]CellState{
 				{Unknown, Unknown, Unknown},
 				{Unknown, Opened_1_mine_nearby, Unknown},
@@ -213,12 +214,12 @@ func TestOpenNearbyCells(t *testing.T) {
 						{Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown},
 					},
-					current: Point{x: 2, y: 2},
 				},
 				Mines: []MinePosition{
 					{Point: Point{x: 0, y: 0}},
 				},
 			},
+			clickCoords: Point{x: 2, y: 2},
 			expected: [][]CellState{
 				{Unknown, Opened_1_mine_nearby, Opened_no_mines_nearby},
 				{Opened_1_mine_nearby, Opened_1_mine_nearby, Opened_no_mines_nearby},
@@ -238,13 +239,13 @@ func TestOpenNearbyCells(t *testing.T) {
 						{Unknown, Unknown, Unknown, Unknown, Unknown},
 						{Unknown, Unknown, Unknown, Unknown, Unknown},
 					},
-					current: Point{x: 2, y: 2},
 				},
 				Mines: []MinePosition{
 					{Point: Point{x: 0, y: 0}},
 					{Point: Point{x: 4, y: 4}},
 				},
 			},
+			clickCoords: Point{x: 2, y: 2},
 			expected: [][]CellState{
 				{Unknown, Opened_1_mine_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
 				{Opened_1_mine_nearby, Opened_1_mine_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby, Opened_no_mines_nearby},
@@ -257,7 +258,7 @@ func TestOpenNearbyCells(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			openNearbyCells(tc.game)
+			openNearbyCells(tc.game, tc.clickCoords.x, tc.clickCoords.y)
 
 			if !reflect.DeepEqual(tc.game.Board.Cells, tc.expected) {
 				t.Errorf("openNearbyCells = %v, expected %v", (*tc.game).Board.Cells, tc.expected)

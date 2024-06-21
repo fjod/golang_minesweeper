@@ -2,6 +2,51 @@ import React, {useEffect, useState} from 'react';
 import Board from "./Board";
 
 const Table = (board) => {
+
+    function getUnicodeRune(value) {
+        // Check if the input value is a valid integer
+        if (!Number.isInteger(value)) {
+            throw new Error('Input must be an integer');
+        }
+
+        if (value == 1){
+            return "᫅";
+        }
+        if (value == 2){
+            return "🟥";
+        }
+        if (value == 3){
+            return "1";
+        }
+        if (value == 4){
+            return "2";
+        }
+        if (value == 5){
+            return "3";
+        }
+        if (value == 6){
+            return "4";
+        }
+        if (value == 7){
+            return "5";
+        }
+        if (value == 8){
+            return "6";
+        }
+        if (value == 9){
+            return "7";
+        }
+        if (value == 10){
+            return "8";
+        }
+        if (value == 11){
+            return "9";
+        }
+        if (value == 12){
+            return "🚩";
+        }
+    }
+
     useEffect(() => {
         // This code will run only once, on the initial render
         const fetchData = async () => {
@@ -21,8 +66,8 @@ const Table = (board) => {
 
     const renderCell = (row, col) => (
         <td key={`${row}-${col}`}>
-            <button onClick={(event) => handleCellClick(row, col ,event)}>
-                {b.cells[row][col]}
+            <button onMouseDown={(event) => handleCellClick(row, col ,event)}>
+                {getUnicodeRune(b.cells[row][col])}
             </button>
         </td>
     );

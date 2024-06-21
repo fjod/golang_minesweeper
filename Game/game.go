@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"os/exec"
-	"runtime"
 )
 
 type MinePosition struct {
@@ -26,7 +24,6 @@ func (g *Game) Init() {
 	board.Init()
 	g.Board = &board
 	generateRandomMines(g)
-	g.Refresh()
 }
 
 func generateRandomMines(g *Game) {
@@ -55,53 +52,39 @@ func generateUniqueMines(g *Game) {
 	}
 }
 
-func (g *Game) Open() {
-	clearConsole()
-	fmt.Println("use arrows to move, f to flag, space to open cell, x to exit")
-	mines := calculateNotFoundMines(g)
-	fmt.Println("mines:", mines)
-	fmt.Println("steps:", g.Steps)
-	fmt.Println("waiting for your step..")
+func Process(g *Game, x int, y int, b int) {
+	if b == 1 {
+		fmt.Println("moving...")
+		g.Open(x, y)
+		g.Steps++
+		return
+	}
+	if b == 2 {
+		fmt.Println("flagging...")
+		g.Board.Flag(x, y)
 
-	failIfMine(g)
-	openNearbyCells(g)
-
-	g.Board.Print()
+		g.Steps++
+		return
+	}
 }
 
-func (g *Game) Flag() {
-	clearConsole()
-	fmt.Println("use arrows to move, f to flag, space to open cell, x to exit")
-	mines := calculateNotFoundMines(g)
-	fmt.Println("mines:", mines)
-	fmt.Println("steps:", g.Steps)
-	fmt.Println("waiting for your step..")
+func (g *Game) Open(x int, y int) {
+	failIfMine(g, x, y)
+	openNearbyCells(g, x, y)
+}
 
-	failIfMine(g)
-	openNearbyCells(g)
-
-	g.Board.Print()
+func (g *Game) Flag(x int, y int) {
+	g.Board.Flag(x, y)
 }
 
 // проверить не попал ли ход на мину
-func failIfMine(g *Game) {
-	position := g.Board.current
+func failIfMine(g *Game, x int, y int) {
 	for _, mine := range g.Mines {
-		if mine.Point.x == position.x && mine.Point.y == position.y {
+		if mine.Point.x == x && mine.Point.y == y {
 			fmt.Println("you stepped on a mine")
 			os.Exit(1)
 		}
 	}
-}
-
-func (g *Game) Refresh() {
-	clearConsole()
-	fmt.Println("use arrows to move, f to flag, space to open cell, x to exit")
-	mines := calculateNotFoundMines(g)
-	fmt.Println("mines:", mines)
-	fmt.Println("steps:", g.Steps)
-	fmt.Println("waiting for your step..")
-	g.Board.Print()
 }
 
 func calculateNotFoundMines(g *Game) int {
@@ -112,18 +95,4 @@ func calculateNotFoundMines(g *Game) int {
 		}
 	}
 	return notFoundMines
-}
-
-func clearConsole() {
-	var cmd *exec.Cmd
-	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd", "/c", "cls")
-	} else {
-		cmd = exec.Command("clear")
-	}
-	cmd.Stdout = os.Stdout
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println("cant clear console")
-	}
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	G "minesweeper/Game"
-	K "minesweeper/Input"
 	"net/http"
 	"strconv"
 )
@@ -16,10 +15,10 @@ func getBoard(c *gin.Context) {
 }
 
 func processStep(c *gin.Context) {
-	x, _ := strconv.Atoi(c.Query("x"))
-	y, _ := strconv.Atoi(c.Query("y"))
-	b, _ := strconv.Atoi(c.Query("b"))
-	K.ProcessKeyStroke(&game, x, y, b)
+	x, _ := strconv.Atoi(c.Params[0].Value)
+	y, _ := strconv.Atoi(c.Params[1].Value)
+	b, _ := strconv.Atoi(c.Params[2].Value)
+	G.Process(&game, x, y, b)
 	c.IndentedJSON(http.StatusOK, &game.Board)
 }
 func main() {

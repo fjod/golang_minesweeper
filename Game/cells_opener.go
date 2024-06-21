@@ -7,7 +7,7 @@ type CellCheckedState struct {
 	state   CellState
 }
 
-func openNearbyCells(g *Game) {
+func openNearbyCells(g *Game, x int, y int) {
 	// сначала создать массив клеток с начальным состоянием
 	h := g.Board.Height
 	w := g.Board.Width
@@ -24,7 +24,7 @@ func openNearbyCells(g *Game) {
 		}
 	}
 
-	openNearbyCellsRec(g, &state, g.Board.current.x, g.Board.current.y)
+	openNearbyCellsRec(g, &state, x, y)
 }
 
 func openNearbyCellsRec(g *Game, s *[][]CellCheckedState, x int, y int) {
