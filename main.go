@@ -10,19 +10,26 @@ import (
 
 var game G.Game
 
-func getBoard(c *gin.Context) {
-	gameState := struct {
-		Board     G.Board `json:"board"`
-		MinesLeft int     `json:"minesLeft"`
-		Steps     int     `json:"steps"`
-		GameOver  bool    `json:"gameOver"`
-	}{
-		Board:     *game.Board,
-		MinesLeft: game.MinesLeft,
-		Steps:     game.Steps,
-		GameOver:  game.GameOver,
-	}
-	c.IndentedJSON(http.StatusOK, gameState)
+type GameState struct {
+	Board     G.Board `json:"board"`
+	MinesLeft int     `json:"minesLeft"`
+	Steps     int     `json:"steps"`
+	GameOver  bool    `json:"gameOver"`
+}
+
+func getState() *GameState {
+	var g GameState
+	g.Board = *game.Board
+	g.MinesLeft = game.MinesLeft
+	g.Steps = game.Steps
+	g.GameOver = game.GameOver
+	return &g
+}
+
+func initGame(c *gin.Context) {
+	game.Init()
+	state := getState()
+	c.IndentedJSON(http.StatusOK, state)
 }
 
 func processStep(c *gin.Context) {
@@ -30,23 +37,11 @@ func processStep(c *gin.Context) {
 	y, _ := strconv.Atoi(c.Params[1].Value)
 	b, _ := strconv.Atoi(c.Params[2].Value)
 	G.Process(&game, x, y, b)
-	gameState := struct {
-		Board     G.Board `json:"board"`
-		MinesLeft int     `json:"minesLeft"`
-		Steps     int     `json:"steps"`
-		GameOver  bool    `json:"gameOver"`
-	}{
-		Board:     *game.Board,
-		MinesLeft: game.MinesLeft,
-		Steps:     game.Steps,
-		GameOver:  game.GameOver,
-	}
-	c.IndentedJSON(http.StatusOK, gameState)
+	state := getState()
+	c.IndentedJSON(http.StatusOK, state)
 }
-func main() {
 
-	game.Init()
-
+func createHttpServer() *gin.Engine {
 	router := gin.Default()
 
 	router.Use(func(c *gin.Context) {
@@ -63,10 +58,17 @@ func main() {
 		c.Next()
 	})
 
-	router.GET("/init", getBoard)
+	router.GET("/init", initGame)
 	router.GET("/step/:x/:y/:b", processStep)
+	return router
+}
 
-	router.Run("localhost:8080")
+func main() {
 
-	fmt.Println("Hello, playground")
+	router := createHttpServer()
+	err := router.Run("localhost:8080")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }

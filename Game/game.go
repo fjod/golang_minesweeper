@@ -22,7 +22,10 @@ func (g *Game) Init() {
 	var board Board
 	board.Height = 10
 	board.Width = 10
+
 	board.Init()
+	g.Mines = []MinePosition{}
+	g.MinesLeft = 0
 	g.Board = &board
 	generateRandomMines(g)
 	g.MinesLeft = calculateNotFoundMines(g)
