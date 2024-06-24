@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Board from "./Board";
+import Game from "./Game";
 
 const Table = (board) => {
 
@@ -9,43 +10,44 @@ const Table = (board) => {
             throw new Error('Input must be an integer');
         }
 
-        if (value == 1){
+        if (value === 1){
             return "᫅";
         }
-        if (value == 2){
+        if (value === 2){
             return "🟥";
         }
-        if (value == 3){
+        if (value === 3){
             return "1";
         }
-        if (value == 4){
+        if (value === 4){
             return "2";
         }
-        if (value == 5){
+        if (value === 5){
             return "3";
         }
-        if (value == 6){
+        if (value === 6){
             return "4";
         }
-        if (value == 7){
+        if (value === 7){
             return "5";
         }
-        if (value == 8){
+        if (value === 8){
             return "6";
         }
-        if (value == 9){
+        if (value === 9){
             return "7";
         }
-        if (value == 10){
+        if (value === 10){
             return "8";
         }
-        if (value == 11){
+        if (value === 11){
             return "9";
         }
-        if (value == 12){
+        if (value === 12){
             return "🚩";
         }
     }
+
 
     useEffect(() => {
         // This code will run only once, on the initial render
@@ -53,7 +55,13 @@ const Table = (board) => {
             try {
                 const response = await fetch('http://localhost:8080/init');
                 const jsonData = await response.json();
-                setRenderCount(Board.fromJSON(jsonData));
+                const game = Game.fromJSON(jsonData);
+                console.log("1111111111111111111111111111111111111111111111");
+                console.log(game);
+                setBoard(game.board);
+                setMinesCount(game.minesLeft);
+                setSteps(game.steps);
+                setGameOver(game.gameOver);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -62,7 +70,10 @@ const Table = (board) => {
         fetchData();
     }, []); // Empty dependency array ensures this effect runs only once
 
-    const [b, setRenderCount] = useState(board);
+    const [b, setBoard] = useState(board);
+    const [minesCount, setMinesCount] = useState(0);
+    const [steps, setSteps] = useState(0);
+    const [gameOver, setGameOver] = useState(false);
 
     const renderCell = (row, col) => (
         <td key={`${row}-${col}`}>
@@ -79,19 +90,37 @@ const Table = (board) => {
             case 0:
                 fetch(`http://localhost:8080/step/${row}/${col}/1`)
                     .then(response => response.json())
-                    .then(data => setRenderCount(Board.fromJSON(data)))
+                    .then(data =>{
+                        const game = Game.fromJSON(data);
+                        setBoard(game.board);
+                        setMinesCount(game.minesLeft);
+                        setSteps(game.steps);
+                        setGameOver(game.gameOver);
+                    })
                     .catch(error => console.error(error));
                 break;
             case 1:
                 fetch(`http://localhost:8080/step/${row}/${col}/2`)
                     .then(response => response.json())
-                    .then(data => setRenderCount(Board.fromJSON(data)))
+                    .then(data =>{
+                        const game = Game.fromJSON(data);
+                        setBoard(game.board);
+                        setMinesCount(game.minesLeft);
+                        setSteps(game.steps);
+                        setGameOver(game.gameOver);
+                    })
                     .catch(error => console.error(error));
                 break;
             case 2:
                 fetch(`http://localhost:8080/step/${row}/${col}/2`)
                     .then(response => response.json())
-                    .then(data => setRenderCount(Board.fromJSON(data)))
+                    .then(data =>{
+                        const game = Game.fromJSON(data);
+                        setBoard(game.board);
+                        setMinesCount(game.minesLeft);
+                        setSteps(game.steps);
+                        setGameOver(game.gameOver);
+                    })
                     .catch(error => console.error(error));
                 break;
             default:
@@ -107,9 +136,16 @@ const Table = (board) => {
     );
 
     return (
+        <div>
         <table>
             <tbody>{Array.from({ length: b.height }, (_, row) => renderRow(row))}</tbody>
         </table>
+            <p>Mines left: {minesCount}</p>
+            <p>Steps: {steps}</p>
+            <p>Game over: {gameOver === true ? "ВЗРЫВ" : "Продолжаем разминирование"}</p>
+            <p>Click on a cell to reveal its value</p>
+            <p>Middle click on a cell to flag it as a mine</p>
+        </div>
     );
 };
 

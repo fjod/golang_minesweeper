@@ -11,7 +11,18 @@ import (
 var game G.Game
 
 func getBoard(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, &game.Board)
+	gameState := struct {
+		Board     G.Board `json:"board"`
+		MinesLeft int     `json:"minesLeft"`
+		Steps     int     `json:"steps"`
+		GameOver  bool    `json:"gameOver"`
+	}{
+		Board:     *game.Board,
+		MinesLeft: game.MinesLeft,
+		Steps:     game.Steps,
+		GameOver:  game.GameOver,
+	}
+	c.IndentedJSON(http.StatusOK, gameState)
 }
 
 func processStep(c *gin.Context) {
@@ -19,7 +30,18 @@ func processStep(c *gin.Context) {
 	y, _ := strconv.Atoi(c.Params[1].Value)
 	b, _ := strconv.Atoi(c.Params[2].Value)
 	G.Process(&game, x, y, b)
-	c.IndentedJSON(http.StatusOK, &game.Board)
+	gameState := struct {
+		Board     G.Board `json:"board"`
+		MinesLeft int     `json:"minesLeft"`
+		Steps     int     `json:"steps"`
+		GameOver  bool    `json:"gameOver"`
+	}{
+		Board:     *game.Board,
+		MinesLeft: game.MinesLeft,
+		Steps:     game.Steps,
+		GameOver:  game.GameOver,
+	}
+	c.IndentedJSON(http.StatusOK, gameState)
 }
 func main() {
 

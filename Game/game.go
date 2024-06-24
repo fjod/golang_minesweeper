@@ -3,7 +3,6 @@ package Game
 import (
 	"fmt"
 	"math/rand"
-	"os"
 )
 
 type MinePosition struct {
@@ -12,9 +11,11 @@ type MinePosition struct {
 }
 
 type Game struct {
-	Mines []MinePosition // расположение мин
-	Board *Board         // игровое поле
-	Steps int            // количество ходов
+	Mines     []MinePosition // расположение мин
+	Board     *Board         // игровое поле
+	Steps     int            // количество ходов
+	MinesLeft int
+	GameOver  bool
 }
 
 func (g *Game) Init() {
@@ -24,6 +25,7 @@ func (g *Game) Init() {
 	board.Init()
 	g.Board = &board
 	generateRandomMines(g)
+	g.MinesLeft = calculateNotFoundMines(g)
 }
 
 func generateRandomMines(g *Game) {
@@ -62,7 +64,7 @@ func Process(g *Game, x int, y int, b int) {
 	if b == 2 {
 		fmt.Println("flagging...")
 		g.Board.Flag(x, y)
-
+		g.MinesLeft--
 		g.Steps++
 		return
 	}
@@ -81,8 +83,7 @@ func (g *Game) Flag(x int, y int) {
 func failIfMine(g *Game, x int, y int) {
 	for _, mine := range g.Mines {
 		if mine.Point.x == x && mine.Point.y == y {
-			fmt.Println("you stepped on a mine")
-			os.Exit(1)
+			g.GameOver = true
 		}
 	}
 }
