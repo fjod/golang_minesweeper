@@ -1,2 +1,2 @@
 # golang_minesweeper
-made with educational purpose
+made with educational purposes

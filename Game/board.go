@@ -22,5 +22,10 @@ func (b *Board) Init() {
 }
 
 func (b *Board) Flag(x int, y int) {
+	currentState := b.Cells[x][y]
+	if currentState == Flagged {
+		b.Cells[x][y] = Unknown
+		return
+	}
 	b.Cells[x][y] = Flagged
 }

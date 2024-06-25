@@ -5,6 +5,13 @@ import (
 	"math/rand"
 )
 
+type Click int
+
+const (
+	LeftClick Click = iota + 1
+	MiddleClick
+)
+
 type MinePosition struct {
 	Point     Point
 	IsCleared bool
@@ -39,9 +46,8 @@ func generateRandomMines(g *Game) {
 }
 
 func generateUniqueMines(g *Game) {
-	notFound := true
-	for notFound {
-		notFound = false
+	for {
+		notFound := false
 		x := rand.Intn(g.Board.Width)
 		y := rand.Intn(g.Board.Height)
 		for _, mine := range g.Mines {
@@ -57,14 +63,14 @@ func generateUniqueMines(g *Game) {
 	}
 }
 
-func Process(g *Game, x int, y int, b int) {
-	if b == 1 {
+func Process(g *Game, x int, y int, b Click) {
+	if b == LeftClick {
 		fmt.Println("moving...")
 		g.Open(x, y)
 		g.Steps++
 		return
 	}
-	if b == 2 {
+	if b == MiddleClick {
 		fmt.Println("flagging...")
 		g.Board.Flag(x, y)
 		g.MinesLeft--
@@ -74,6 +80,10 @@ func Process(g *Game, x int, y int, b int) {
 }
 
 func (g *Game) Open(x int, y int) {
+	currentState := g.Board.Cells[x][y]
+	if currentState != Unknown { // do nothing if cell is already opened
+		return
+	}
 	failIfMine(g, x, y)
 	openNearbyCells(g, x, y)
 }

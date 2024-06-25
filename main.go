@@ -36,7 +36,8 @@ func processStep(c *gin.Context) {
 	x, _ := strconv.Atoi(c.Params[0].Value)
 	y, _ := strconv.Atoi(c.Params[1].Value)
 	b, _ := strconv.Atoi(c.Params[2].Value)
-	G.Process(&game, x, y, b)
+	click := G.Click(b)
+	G.Process(&game, x, y, click)
 	state := getState()
 	c.IndentedJSON(http.StatusOK, state)
 }
